@@ -9,10 +9,12 @@ namespace PlatformShoot
         private float mGroundMoveSpeed = 5f;
         private float mJumpForce = 12f;
         private bool mJumpInput;
+        private MainPanel mMainPanel;
 
         private void Start()
         {
             mRig = GetComponent<Rigidbody2D>();
+            mMainPanel = GameObject.Find("MainPanel").GetComponent<MainPanel>();
         }
 
         private void Update()
@@ -40,6 +42,11 @@ namespace PlatformShoot
 
         private void OnTriggerEnter2D(Collider2D coll)
         {
+            if(coll.gameObject.CompareTag("Reward"))
+            {
+                GameObject.Destroy(coll.gameObject);
+                mMainPanel.UpdateScoreText(1);
+            }
             if(coll.gameObject.CompareTag("Door"))
             {
                 SceneManager.LoadScene("GamePassScene");
