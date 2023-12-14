@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace PlatformShoot
 {
@@ -29,6 +30,14 @@ namespace PlatformShoot
                 mRig.velocity = new Vector2(mRig.velocity.x, mJumpForce);
             }
             mRig.velocity = new Vector2(Input.GetAxisRaw("Horizontal") * mGroundMoveSpeed, mRig.velocity.y);
+        }
+
+        private void OnTriggerEnter2D(Collider2D coll)
+        {
+            if(coll.gameObject.CompareTag("Door"))
+            {
+                SceneManager.LoadScene("GamePassScene");
+            }
         }
     }
 }
