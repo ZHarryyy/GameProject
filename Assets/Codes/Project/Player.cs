@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace PlatformShoot
@@ -13,6 +11,15 @@ namespace PlatformShoot
         private void Start()
         {
             mRig = GetComponent<Rigidbody2D>();
+        }
+
+        private void Update()
+        {
+            if(Input.GetKeyDown(KeyCode.J))
+            {
+                var bullet = Resources.Load<GameObject>("Bullet");
+                GameObject.Instantiate(bullet, transform.position, Quaternion.identity);
+            }
         }
 
         private void FixedUpdate()
