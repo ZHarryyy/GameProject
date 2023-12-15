@@ -1,9 +1,9 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using QFramework;
 
 namespace PlatformShoot
 {
-    public class Player : MonoBehaviour
+    public class Player : MonoBehaviour, IController
     {
         private Rigidbody2D mRig;
         private float mGroundMoveSpeed = 5f;
@@ -12,25 +12,19 @@ namespace PlatformShoot
         private bool mJumpInput;
         private int mFaceDir = 1;
 
-        private MainPanel mMainPanel;
-        private GameObject mGamePass;
-
         private void Start()
         {
             mRig = GetComponent<Rigidbody2D>();
-            mGamePass = GameObject.Find("GamePass");
-            mGamePass.SetActive(false);
-            mMainPanel = GameObject.Find("MainPanel").GetComponent<MainPanel>();
+            this.GetSystem<ICameraSystem>().SetTarget(this.transform);
         }
 
         private void Update()
         {
             if(Input.GetKeyDown(KeyCode.J))
             {
-                var obj = Resources.Load<GameObject>("Bullet");
+                var obj = Resources.Load<GameObject>("Item/Bullet");
                 obj = GameObject.Instantiate(obj, transform.position, Quaternion.identity);
                 Bullet bullet = obj.GetComponent<Bullet>();
-                bullet.GetGamePass(mGamePass);
                 bullet.InitDir(mFaceDir);
             }
             if(Input.GetKeyDown(KeyCode.K))
@@ -55,17 +49,28 @@ namespace PlatformShoot
             mRig.velocity = new Vector2(h * mGroundMoveSpeed, mRig.velocity.y);
         }
 
+        private void LateUpdate()
+        {
+            this.GetSystem<ICameraSystem>().Update();
+        }
+
         private void OnTriggerEnter2D(Collider2D coll)
         {
             if(coll.gameObject.CompareTag("Reward"))
             {
                 GameObject.Destroy(coll.gameObject);
-                mMainPanel.UpdateScoreText(1);
+                this.GetModel<IGameModel>().Score.Value++;
+                // mMainPanel.UpdateScoreText(1);
             }
             if(coll.gameObject.CompareTag("Door"))
             {
-                SceneManager.LoadScene("GamePassScene");
+                this.SendCommand(new NextLevelCommand("GamePassScene"));
             }
+        }
+
+        IArchitecture IBelongToArchitecture.GetArchitecture()
+        {
+            return PlatformShootGame.Interface;
         }
     }
 }
