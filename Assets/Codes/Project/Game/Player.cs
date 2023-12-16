@@ -6,6 +6,9 @@ namespace PlatformShoot
     public class Player : MonoBehaviour, IController
     {
         private Rigidbody2D mRig;
+        private BoxCollider2D mBoxColl;
+        private LayerMask mGroundLayer;
+
         private float mGroundMoveSpeed = 5f;
         private float mJumpForce = 12f;
 
@@ -15,6 +18,8 @@ namespace PlatformShoot
         private void Start()
         {
             mRig = GetComponent<Rigidbody2D>();
+            mBoxColl = GetComponentInChildren<BoxCollider2D>();
+            mGroundLayer = LayerMask.GetMask("Ground");
             this.GetSystem<ICameraSystem>().SetTarget(this.transform);
         }
 
@@ -29,8 +34,17 @@ namespace PlatformShoot
             }
             if(Input.GetKeyDown(KeyCode.K))
             {
-                mJumpInput = true;
+                if(Physics2D.OverlapBox(transform.position + mBoxColl.size.y * Vector3.down * 0.5f, new Vector2(mBoxColl.size.x * 0.8f, 0.1f), 0, mGroundLayer))
+                {
+                    mJumpInput = true;
+                }
             }
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireCube(transform.position + mBoxColl.size.y * Vector3.down * 0.5f, new Vector2(mBoxColl.size.x * 0.9f, 0.1f));
         }
 
         private void FixedUpdate()
