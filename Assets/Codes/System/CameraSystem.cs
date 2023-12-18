@@ -1,4 +1,5 @@
 using QFramework;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace PlatformShoot
@@ -6,7 +7,6 @@ namespace PlatformShoot
     public interface ICameraSystem : ISystem
     {
         void SetTarget(Transform target);
-        void Update();
     }
 
     public class CameraSystem : AbstractSystem, ICameraSystem
@@ -15,7 +15,7 @@ namespace PlatformShoot
 
         protected override void OnInit()
         {
-            
+            PublicMono.Instance.OnLateUpdate += Update;
         }
 
         void ICameraSystem.SetTarget(Transform target)
@@ -23,8 +23,9 @@ namespace PlatformShoot
             mTarget = target;
         }
 
-        void ICameraSystem.Update()
+        private void Update()
         {
+            if(mTarget == null) return;
             Camera.main.transform.localPosition = new Vector3(mTarget.position.x, mTarget.position.y, -10);
         }
     }

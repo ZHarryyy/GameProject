@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using QFramework;
 using UnityEngine;
 
 namespace PlatformShoot
@@ -23,9 +24,12 @@ namespace PlatformShoot
         public void PlaySound(string name)
         {
             var source = gameObject.AddComponent<AudioSource>();
-            source.clip = Resources.Load<AudioClip>("Audio/Sound/" + name);
-            source.Play();
-            mPlayingList.Add(source);
+            ResHelper.AsyncLoad<AudioClip>("Audio/Sound/" + name, clip =>
+            {
+                source.clip = clip;
+                source.Play();
+                mPlayingList.Add(source);
+            });
         }
 
         private void Update()

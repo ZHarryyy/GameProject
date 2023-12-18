@@ -38,7 +38,7 @@ namespace PlatformShoot
                 }
                 else
                 {
-                    AudioPlay.Instance.PlaySound("清脆高频机中");
+                    AudioPlay.Instance.PlaySound("清脆高频击中");
                 }
                 GameObject.Destroy(gameObject);
             }

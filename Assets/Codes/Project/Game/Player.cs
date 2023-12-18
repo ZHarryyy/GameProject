@@ -32,10 +32,11 @@ namespace PlatformShoot
             {
                 AudioPlay.Instance.PlaySound("竖琴");
 
-                var obj = Resources.Load<GameObject>("Item/Bullet");
-                obj = GameObject.Instantiate(obj, transform.position, Quaternion.identity);
-                Bullet bullet = obj.GetComponent<Bullet>();
-                bullet.InitDir(mFaceDir);
+                ResHelper.AsyncLoad<GameObject>("Item/Bullet", o =>
+                {
+                    o.transform.localPosition = transform.position;
+                    o.GetComponent<Bullet>().InitDir(mFaceDir);
+                });
             }
 
             var ground = Physics2D.OverlapBox(transform.position + mBoxColl.size.y * Vector3.down * 0.5f, new Vector2(mBoxColl.size.x * 0.8f, 0.1f), 0, mGroundLayer);
@@ -89,11 +90,6 @@ namespace PlatformShoot
                 mFaceDir = -mFaceDir;
                 transform.Rotate(0, 180, 0);
             }
-        }
-
-        private void LateUpdate()
-        {
-            this.GetSystem<ICameraSystem>().Update();
         }
 
         private void OnTriggerEnter2D(Collider2D coll)
