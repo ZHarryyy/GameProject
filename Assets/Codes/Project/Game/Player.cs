@@ -16,6 +16,7 @@ namespace PlatformShoot
 
         private bool mJumpInput;
         private int mFaceDir = 1;
+        private bool isJumping;
 
         private void Start()
         {
@@ -29,16 +30,28 @@ namespace PlatformShoot
         {
             if(Input.GetKeyDown(KeyCode.J))
             {
+                AudioPlay.Instance.PlaySound("竖琴");
+
                 var obj = Resources.Load<GameObject>("Item/Bullet");
                 obj = GameObject.Instantiate(obj, transform.position, Quaternion.identity);
                 Bullet bullet = obj.GetComponent<Bullet>();
                 bullet.InitDir(mFaceDir);
             }
+
+            var ground = Physics2D.OverlapBox(transform.position + mBoxColl.size.y * Vector3.down * 0.5f, new Vector2(mBoxColl.size.x * 0.8f, 0.1f), 0, mGroundLayer);
+
             if(Input.GetKeyDown(KeyCode.K))
             {
-                if(Physics2D.OverlapBox(transform.position + mBoxColl.size.y * Vector3.down * 0.5f, new Vector2(mBoxColl.size.x * 0.8f, 0.1f), 0, mGroundLayer))
+                if(ground)
                 {
+                    AudioPlay.Instance.PlaySound("跳跃");
                     mJumpInput = true;
+                    isJumping = true;
+                }
+                else if(ground && isJumping)
+                {
+                    AudioPlay.Instance.PlaySound("落地2");
+                    isJumping = false;
                 }
             }
         }
@@ -46,6 +59,7 @@ namespace PlatformShoot
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.red;
+            if(mBoxColl == null) return;
             Gizmos.DrawWireCube(transform.position + mBoxColl.size.y * Vector3.down * 0.5f, new Vector2(mBoxColl.size.x * 0.9f, 0.1f));
         }
 
@@ -88,11 +102,12 @@ namespace PlatformShoot
             {
                 GameObject.Destroy(coll.gameObject);
                 this.GetModel<IGameModel>().Score.Value++;
-                // mMainPanel.UpdateScoreText(1);
+                AudioPlay.Instance.PlaySound("拾取金币");
             }
             if(coll.gameObject.CompareTag("Door"))
             {
                 this.SendCommand(new NextLevelCommand("GamePassScene"));
+                AudioPlay.Instance.PlaySound("通关音效");
             }
         }
 
