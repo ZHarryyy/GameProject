@@ -9,6 +9,8 @@ namespace PlatformShoot
         private BoxCollider2D mBoxColl;
         private LayerMask mGroundLayer;
 
+        private float mAccDelta = 0.6f;
+        private float mDecDelta = 0.9f;
         private float mGroundMoveSpeed = 5f;
         private float mJumpForce = 12f;
 
@@ -49,18 +51,30 @@ namespace PlatformShoot
 
         private void FixedUpdate()
         {
-            if(mJumpInput)
+            if (mJumpInput)
             {
                 mJumpInput = false;
                 mRig.velocity = new Vector2(mRig.velocity.x, mJumpForce);
             }
             float h = Input.GetAxisRaw("Horizontal");
-            if(h != 0 && h != mFaceDir)
+            if (h != 0)
+            {
+                mRig.velocity = new Vector2(Mathf.Clamp(mRig.velocity.x + h * mAccDelta, -mGroundMoveSpeed, mGroundMoveSpeed), mRig.velocity.y);
+            }
+            else
+            {
+                mRig.velocity = new Vector2(Mathf.MoveTowards(mRig.velocity.x, 0, mDecDelta), mRig.velocity.y);
+            }
+            Flip(h);
+        }
+
+        private void Flip(float h)
+        {
+            if (h != 0 && h != mFaceDir)
             {
                 mFaceDir = -mFaceDir;
                 transform.Rotate(0, 180, 0);
             }
-            mRig.velocity = new Vector2(h * mGroundMoveSpeed, mRig.velocity.y);
         }
 
         private void LateUpdate()
