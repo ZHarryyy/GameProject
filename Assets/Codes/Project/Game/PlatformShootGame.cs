@@ -9,6 +9,12 @@ namespace PlatformShoot
             RegisterModel<IGameModel>(new GameModel());
 
             RegisterSystem<ICameraSystem>(new CameraSystem());
+
+            RegisterSystem<IAudioMgrSystem>(new AudioMgrSystem());
+
+            RegisterSystem<IObjectPoolSystem>(new ObjectPoolSystem());
+
+            RegisterSystem<ITimerSystem>(new TimerSystem());
         }
     }
 }

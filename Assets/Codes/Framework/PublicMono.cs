@@ -3,16 +3,8 @@ using UnityEngine;
 
 namespace QFramework
 {
-    public class PublicMono : MonoBehaviour
+    public class PublicMono : MonoSingle<PublicMono>
     {
-        public static PublicMono Instance;
-
-        private void Awake()
-        {
-            Instance = this;
-            GameObject.DontDestroyOnLoad(gameObject);
-        }
-
         public event Action OnUpdate;
         public event Action OnLateUpdate;
         public event Action OnFixedUpdate;

@@ -18,21 +18,28 @@ namespace PlatformShoot
         private int mFaceDir = 1;
         private bool isJumping;
 
+        private IObjectPoolSystem objectPool;
+        private IAudioMgrSystem audioMgr;
+
         private void Start()
         {
             mRig = GetComponent<Rigidbody2D>();
             mBoxColl = GetComponentInChildren<BoxCollider2D>();
             mGroundLayer = LayerMask.GetMask("Ground");
             this.GetSystem<ICameraSystem>().SetTarget(this.transform);
+
+            objectPool = this.GetSystem<IObjectPoolSystem>();
+            audioMgr = this.GetSystem<IAudioMgrSystem>();
+            audioMgr.PlayBgm("黑色之翼");
         }
 
         private void Update()
         {
             if(Input.GetKeyDown(KeyCode.J))
             {
-                AudioPlay.Instance.PlaySound("竖琴");
+                audioMgr.PlaySound("竖琴");
 
-                ResHelper.AsyncLoad<GameObject>("Item/Bullet", o =>
+                objectPool.Get("Item/Bullet", o =>
                 {
                     o.transform.localPosition = transform.position;
                     o.GetComponent<Bullet>().InitDir(mFaceDir);
@@ -45,13 +52,13 @@ namespace PlatformShoot
             {
                 if(ground)
                 {
-                    AudioPlay.Instance.PlaySound("跳跃");
+                    audioMgr.PlaySound("跳跃");
                     mJumpInput = true;
                     isJumping = true;
                 }
                 else if(ground && isJumping)
                 {
-                    AudioPlay.Instance.PlaySound("落地2");
+                    audioMgr.PlaySound("落地2");
                     isJumping = false;
                 }
             }
@@ -74,22 +81,22 @@ namespace PlatformShoot
             float h = Input.GetAxisRaw("Horizontal");
             if (h != 0)
             {
+                if(h != mFaceDir)
+                {
+                    Flip();
+                }
                 mRig.velocity = new Vector2(Mathf.Clamp(mRig.velocity.x + h * mAccDelta, -mGroundMoveSpeed, mGroundMoveSpeed), mRig.velocity.y);
             }
             else
             {
                 mRig.velocity = new Vector2(Mathf.MoveTowards(mRig.velocity.x, 0, mDecDelta), mRig.velocity.y);
             }
-            Flip(h);
         }
 
-        private void Flip(float h)
+        private void Flip()
         {
-            if (h != 0 && h != mFaceDir)
-            {
-                mFaceDir = -mFaceDir;
-                transform.Rotate(0, 180, 0);
-            }
+            mFaceDir = -mFaceDir;
+            transform.Rotate(0, 180, 0);
         }
 
         private void OnTriggerEnter2D(Collider2D coll)
@@ -98,12 +105,12 @@ namespace PlatformShoot
             {
                 GameObject.Destroy(coll.gameObject);
                 this.GetModel<IGameModel>().Score.Value++;
-                AudioPlay.Instance.PlaySound("拾取金币");
+                audioMgr.PlaySound("拾取金币");
             }
-            if(coll.gameObject.CompareTag("Door"))
+            else if(coll.gameObject.CompareTag("Door"))
             {
                 this.SendCommand(new NextLevelCommand("GamePassScene"));
-                AudioPlay.Instance.PlaySound("通关音效");
+                audioMgr.PlaySound("通关音效");
             }
         }
 

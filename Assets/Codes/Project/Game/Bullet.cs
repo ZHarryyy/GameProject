@@ -9,10 +9,26 @@ namespace PlatformShoot
 
         private int bulletDir;
 
-        void Start()
+        private float moveSpeed = 20f;
+
+        private Timer mTimer;
+
+        public void Awake()
         {
-            GameObject.Destroy(this.gameObject, 3f);
             mLayerMask = LayerMask.GetMask("Ground", "Trigger");
+        }
+
+        private void OnEnable()
+        {
+            mTimer = this.GetSystem<ITimerSystem>().AddTimer(3f, () => 
+            {
+                this.GetSystem<IObjectPoolSystem>().Recovery(gameObject);
+            });
+        }
+
+        private void OnDisable()
+        {
+            mTimer.Stop();
         }
 
         public void InitDir(int dir)
@@ -20,9 +36,9 @@ namespace PlatformShoot
             bulletDir = dir;
         }
 
-        void Update()
+        public void Update()
         {
-            transform.Translate(bulletDir * 12 * Time.deltaTime, 0, 0);
+            transform.Translate(bulletDir * moveSpeed * Time.deltaTime, 0, 0);
         }
 
         private void FixedUpdate()
@@ -34,13 +50,13 @@ namespace PlatformShoot
                 {
                     GameObject.Destroy(coll.gameObject);
                     this.SendCommand<ShowPassDoorCommand>();
-                    AudioPlay.Instance.PlaySound("碰铃撞击");
+                    this.GetSystem<IAudioMgrSystem>().PlaySound("碰铃撞击");
                 }
                 else
                 {
-                    AudioPlay.Instance.PlaySound("清脆高频击中");
+                    this.GetSystem<IAudioMgrSystem>().PlaySound("清脆高频击中");
                 }
-                GameObject.Destroy(gameObject);
+                this.GetSystem<IObjectPoolSystem>().Recovery(gameObject);
             }
         }
 
