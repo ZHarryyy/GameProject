@@ -11,10 +11,14 @@ namespace PlatformShoot
     public class CameraSystem : AbstractSystem, ICameraSystem
     {
         private Transform mTarget;
+        private Vector3 mTempPos;
+        private float minX = -100f, minY = -100f, maxX = 100f, maxY = 100f;
+        private float mSmoothSpeed = 5f;
 
         protected override void OnInit()
         {
             PublicMono.Instance.OnLateUpdate += Update;
+            mTempPos.z = -10;
         }
 
         void ICameraSystem.SetTarget(Transform target)
@@ -25,7 +29,12 @@ namespace PlatformShoot
         private void Update()
         {
             if(mTarget == null) return;
-            Camera.main.transform.localPosition = new Vector3(mTarget.position.x, mTarget.position.y, -10);
+            mTempPos.x = Mathf.Clamp(mTarget.position.x, minX, maxX);
+            mTempPos.y = Mathf.Clamp(mTarget.position.y, minY, maxY);
+
+            var cam = Camera.main.transform;
+            if((cam.position - mTempPos).sqrMagnitude < 0.01f) return;
+            cam.localPosition = Vector3.Lerp(cam.position, mTempPos, mSmoothSpeed);
         }
     }
 }

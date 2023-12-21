@@ -5,7 +5,7 @@ namespace PlatformShoot
 {
     public class SettingPanel : PlatformShootGameController
     {
-            private IGameAudioModel gameAudio;
+        private IGameAudioModel gameAudio;
 
         private void Awake()
         {
