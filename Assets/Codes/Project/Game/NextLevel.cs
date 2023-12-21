@@ -1,16 +1,9 @@
-using UnityEngine;
 using QFramework;
-using System;
 
 namespace PlatformShoot
 {
-    public class NextLevel : MonoBehaviour, IController
+    public class NextLevel : PlatformShootGameController
     {
-        IArchitecture IBelongToArchitecture.GetArchitecture()
-        {
-            return PlatformShootGame.Interface;
-        }
-
         private void Start()
         {
             gameObject.SetActive(false);

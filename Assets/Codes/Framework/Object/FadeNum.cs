@@ -12,11 +12,9 @@ namespace QFramework
     public class FadeNum
     {
         private FadeState mFadeState = FadeState.Close;
-        public bool IsEnabled => mFadeState != FadeState.Close;
         private bool mInit = false;
-        private Action mOnEvent;
+        private Action mOnFinish;
         private float mCurrentValue;
-        public float CurrentValue => mCurrentValue;
         private float mMin = 0, mMax = 1;
 
         public void SetMinMax(float min, float max)
@@ -25,14 +23,24 @@ namespace QFramework
             mMax = max;
         }
 
+        public bool IsEnabled => mFadeState != FadeState.Close;
+
         public void SetState(FadeState state, Action action = null)
         {
-            mOnEvent = action;
+            mOnFinish = action;
             mFadeState = state;
             mInit = false;
         }
 
-        public void Update(float step)
+        private void OnFinish(float value)
+        {
+            mOnFinish?.Invoke();
+            mCurrentValue = value;
+            if(!mInit) return;
+            mFadeState = FadeState.Close;
+        }
+
+        public float Update(float step)
         {
             switch(mFadeState)
             {
@@ -46,12 +54,7 @@ namespace QFramework
                     {
                         mCurrentValue += step;
                     }
-                    else
-                    {
-                        mOnEvent?.Invoke();
-                        mCurrentValue = mMax;
-                        if(mInit) mFadeState = FadeState.Close;
-                    }
+                    else OnFinish(mMax);
                     break;
                 case FadeState.FadeOut:
                     if(!mInit)
@@ -63,14 +66,10 @@ namespace QFramework
                     {
                         mCurrentValue -= step;
                     }
-                    else
-                    {
-                        mOnEvent?.Invoke();
-                        mCurrentValue = mMin;
-                        if(mInit) mFadeState = FadeState.Close;
-                    }
+                    else OnFinish(mMin);
                     break;
             }
+            return mCurrentValue;
         }
     }
 }

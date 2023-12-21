@@ -3,7 +3,7 @@ using QFramework;
 
 namespace PlatformShoot
 {
-    public class Bullet : MonoBehaviour, IController
+    public class Bullet : PlatformShootGameController
     {
         private LayerMask mLayerMask;
 
@@ -58,11 +58,6 @@ namespace PlatformShoot
                 }
                 this.GetSystem<IObjectPoolSystem>().Recovery(gameObject);
             }
-        }
-
-        IArchitecture IBelongToArchitecture.GetArchitecture()
-        {
-            return PlatformShootGame.Interface;
         }
     }
 }

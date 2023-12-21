@@ -3,7 +3,7 @@ using QFramework;
 
 namespace PlatformShoot
 {
-    public class Player : MonoBehaviour, IController
+    public class Player : PlatformShootGameController
     {
         private Rigidbody2D mRig;
         private BoxCollider2D mBoxColl;
@@ -112,11 +112,6 @@ namespace PlatformShoot
                 this.SendCommand(new NextLevelCommand("GamePassScene"));
                 audioMgr.PlaySound("通关音效");
             }
-        }
-
-        IArchitecture IBelongToArchitecture.GetArchitecture()
-        {
-            return PlatformShootGame.Interface;
         }
     }
 }

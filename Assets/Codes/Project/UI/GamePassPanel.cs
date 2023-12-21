@@ -1,10 +1,9 @@
-using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace PlatformShoot
 {
-    public class GamePassPanel : MonoBehaviour
+    public class GamePassPanel : PlatformShootGameController
     {
         private void Start()
         {
