@@ -11,6 +11,7 @@ namespace PlatformShoot
             RegisterModel<IGameAudioModel>(new GameAudioModel());
 
             RegisterSystem<ITimerSystem>(new TimerSystem());
+            RegisterSystem<IPlayerInputSystem>(new PlayerInputSystem());
             RegisterSystem<IObjectPoolSystem>(new ObjectPoolSystem());
             RegisterSystem<IAudioMgrSystem>(new AudioMgrSystem());
             RegisterSystem<ICameraSystem>(new CameraSystem());
