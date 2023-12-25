@@ -7,7 +7,7 @@ namespace PlatformShoot
     {
         private LayerMask mLayerMask;
 
-        private int bulletDir;
+        private Vector2 bulletDir;
 
         private float moveSpeed = 20f;
 
@@ -31,14 +31,14 @@ namespace PlatformShoot
             mTimer.Stop();
         }
 
-        public void InitDir(int dir)
+        public void InitDir(Vector2 dir)
         {
-            bulletDir = dir;
+            bulletDir = dir.normalized;
         }
 
         public void Update()
         {
-            transform.Translate(bulletDir * moveSpeed * Time.deltaTime, 0, 0);
+            transform.Translate(bulletDir * moveSpeed * Time.deltaTime);
         }
 
         private void FixedUpdate()

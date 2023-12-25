@@ -82,7 +82,7 @@ namespace PlatformShoot
                 objectPool.Get("Item/Bullet", o =>
                 {
                     o.transform.localPosition = transform.position;
-                    o.GetComponent<Bullet>().InitDir(mFaceDir);
+                    o.GetComponent<Bullet>().InitDir(Vector2.right * mFaceDir);
                 });
             }
 
