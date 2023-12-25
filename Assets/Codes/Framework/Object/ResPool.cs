@@ -14,10 +14,11 @@ namespace QFramework
                 callBack(data);
                 return;
             }
+            mResDic.Add(key, null);
             ResHelper.AsyncLoad<T>(key, o =>
             {
                 callBack(o);
-                mResDic.Add(key, o);
+                mResDic[key] = o;
             });
         }
 

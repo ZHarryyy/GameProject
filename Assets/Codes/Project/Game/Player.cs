@@ -30,12 +30,27 @@ namespace PlatformShoot
 
         private IObjectPoolSystem objectPool;
         private IAudioMgrSystem audioMgr;
+        private Timer mShootTimer;
 
         Vector2 ICamTarget.Pos => transform.position;
 
         private void Awake()
         {
             this.SendCommand<InitGameCommand>();
+            mShootTimer = this.GetSystem<ITimerSystem>().AddTimer(0.2f, () =>
+            {
+                if(mAttackInput)
+                {
+                    // mAttackInput = false;
+                    audioMgr.PlaySound("竖琴");
+
+                    objectPool.Get("Item/Bullet", o =>
+                    {
+                        o.transform.localPosition = transform.position;
+                        o.GetComponent<Bullet>().InitDir(Vector2.right * mFaceDir);
+                    });
+                }
+            }, true);
         }
 
         private void Start()
@@ -74,18 +89,6 @@ namespace PlatformShoot
 
         private void Update()
         {
-            if(mAttackInput)
-            {
-                mAttackInput = false;
-                audioMgr.PlaySound("竖琴");
-
-                objectPool.Get("Item/Bullet", o =>
-                {
-                    o.transform.localPosition = transform.position;
-                    o.GetComponent<Bullet>().InitDir(Vector2.right * mFaceDir);
-                });
-            }
-
             mGround = Physics2D.OverlapBox(transform.position + mBoxColl.size.y * Vector3.down * 0.5f, new Vector2(mBoxColl.size.x * 0.8f, 0.1f), 0, mGroundLayer);
 
             if(mGround)
