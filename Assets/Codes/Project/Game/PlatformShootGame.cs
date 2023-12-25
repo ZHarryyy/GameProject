@@ -11,14 +11,20 @@ namespace PlatformShoot
             RegisterModel<IGameAudioModel>(new GameAudioModel());
 
             RegisterSystem<ITimerSystem>(new TimerSystem());
+            RegisterSystem<IInputDeviceMgrSystem>(new InputDeviceMgrSystem());
             RegisterSystem<IPlayerInputSystem>(new PlayerInputSystem());
             RegisterSystem<IObjectPoolSystem>(new ObjectPoolSystem());
             RegisterSystem<IAudioMgrSystem>(new AudioMgrSystem());
-            RegisterSystem<ICameraSystem>(new CameraSystem());
+            RegisterSystem<ICameraSystem>(new AdvancedCameraSystem());
         }
     }
 
     public class PlatformShootGameController: MonoBehaviour, IController
+    {
+        IArchitecture IBelongToArchitecture.GetArchitecture() => PlatformShootGame.Interface;
+    }
+
+    public class PlatformShootUIController : UIPanel, IController
     {
         IArchitecture IBelongToArchitecture.GetArchitecture() => PlatformShootGame.Interface;
     }
