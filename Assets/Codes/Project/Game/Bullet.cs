@@ -15,7 +15,7 @@ namespace PlatformShoot
 
         public void Awake()
         {
-            mLayerMask = LayerMask.GetMask("Ground", "Trigger");
+            mLayerMask = LayerMask.GetMask("Ground", "Trigger", "Enemy");
         }
 
         private void OnEnable()
@@ -46,7 +46,12 @@ namespace PlatformShoot
             var coll = Physics2D.OverlapBox(transform.position, transform.localScale, 0, mLayerMask);
             if(coll)
             {
-                if(coll.CompareTag("Trigger"))
+                if(coll.CompareTag("Enemy"))
+                {
+                    GameObject.Destroy(coll.gameObject);
+                    this.GetSystem<IAudioMgrSystem>().PlaySound("碰铃撞击");
+                }
+                else if(coll.CompareTag("Trigger"))
                 {
                     GameObject.Destroy(coll.gameObject);
                     this.SendCommand<ShowPassDoorCommand>();

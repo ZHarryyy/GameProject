@@ -9,6 +9,7 @@ TagManager:
   - Trigger
   - Pitfall
   - Interactive
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - UI
   - Ground
   - Trigger
-  - 
+  - Enemy
   - 
   - 
   - 
