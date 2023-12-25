@@ -15,11 +15,13 @@ namespace PlatformShoot
         private float mJumpForce = 13f;
 
         private bool mJumpInput;
+        [SerializeField] private int mJumpCount;
+        [SerializeField] private int maxJumpCount = 2;
         private int mFaceDir = 1;
         private bool isJumping;
         private Vector2 mCurSpeed;
 
-        [SerializeField]private int mInputX;
+        private int mInputX;
         private int mInputY;
 
         private bool mAttackInput;
@@ -45,30 +47,34 @@ namespace PlatformShoot
 
             objectPool = this.GetSystem<IObjectPoolSystem>();
             audioMgr = this.GetSystem<IAudioMgrSystem>();
+
             this.RegisterEvent<DirInputEvent>(e =>
             {
                 mInputX = e.inputX;
                 mInputY = e.inputY;
-            });
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
             this.RegisterEvent<ShootInputEvent>(e =>
             {
                 mAttackInput = e.isTrigger;
-            });
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+
             this.RegisterEvent<JumpInputEvent>(e =>
             {
-                if(mGround)
+                if(mJumpCount > 0)
                 {
                     audioMgr.PlaySound("跳跃");
                     mJumpInput = true;
                     isJumping = true;
                 }
-            });
-            // audioMgr.PlayBgm("黑色之翼");
+            }).UnRegisterWhenGameObjectDestroyed(gameObject);
+            
+            audioMgr.PlayBgm("黑色之翼");
         }
 
         private void Update()
         {
-            if(Input.GetKeyDown(KeyCode.J))
+            if(mAttackInput)
             {
                 mAttackInput = false;
                 audioMgr.PlaySound("竖琴");
@@ -81,6 +87,11 @@ namespace PlatformShoot
             }
 
             mGround = Physics2D.OverlapBox(transform.position + mBoxColl.size.y * Vector3.down * 0.5f, new Vector2(mBoxColl.size.x * 0.8f, 0.1f), 0, mGroundLayer);
+
+            if(mGround)
+            {
+                mJumpCount = maxJumpCount;
+            }
 
             if(mGround && isJumping)
             {
@@ -108,14 +119,15 @@ namespace PlatformShoot
         {
             Gizmos.color = Color.red;
             if(mBoxColl == null) return;
-            // Gizmos.DrawWireCube(transform.position + mBoxColl.size.y * Vector3.down * 0.5f, new Vector2(mBoxColl.size.x * 0.9f, 0.1f));
+            Gizmos.DrawWireCube(transform.position + mBoxColl.size.y * Vector3.down * 0.5f, new Vector2(mBoxColl.size.x * 0.9f, 0.1f));
         }
 
         private void FixedUpdate()
         {
-            Debug.DrawLine(transform.position, transform.position + Vector3.down * 0.1f, Color.red, 10);
+            // Debug.DrawLine(transform.position, transform.position + Vector3.down * 0.1f, Color.red, 10);
             if (mJumpInput)
             {
+                mJumpCount--;
                 mJumpInput = false;
                 mCurSpeed.y = mJumpForce;
             }
@@ -130,20 +142,9 @@ namespace PlatformShoot
 
         private void OnTriggerEnter2D(Collider2D coll)
         {
-            if(coll.CompareTag("Pitfall"))
+            if(coll.gameObject.CompareTag("Interactive"))
             {
-                this.SendCommand(new NextLevelCommand("GamePassScene"));
-            }
-            else if(coll.gameObject.CompareTag("Reward"))
-            {
-                GameObject.Destroy(coll.gameObject);
-                this.GetModel<IGameModel>().Score.Value++;
-                audioMgr.PlaySound("拾取金币");
-            }
-            else if(coll.gameObject.CompareTag("Door"))
-            {
-                this.SendCommand(new NextLevelCommand("GamePassScene"));
-                audioMgr.PlaySound("通关音效");
+                coll.GetComponent<IInteractiveItem>()?.Trigger();
             }
         }
     }
