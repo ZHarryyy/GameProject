@@ -9,7 +9,7 @@ namespace PlatformShoot
         {
             transform.Find("LeftStickArea").GetComponent<StickDrag>().Register((x, y) =>
             {
-                this.SendEvent(new DirInputEvent() { inputX = x, inputY = y });
+                this.SendEvent(new DirInputEvent() { x = x, y = y });
             });
 
             transform.Find("RightStickArea").GetComponent<StickDrag>().Register((x, y) =>

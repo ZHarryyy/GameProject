@@ -16,6 +16,7 @@ namespace PlatformShoot
             RegisterSystem<IObjectPoolSystem>(new ObjectPoolSystem());
             RegisterSystem<IAudioMgrSystem>(new AudioMgrSystem());
             RegisterSystem<ICameraSystem>(new AdvancedCameraSystem());
+            RegisterSystem<IGunSystem>(new GunSystem());
         }
     }
 

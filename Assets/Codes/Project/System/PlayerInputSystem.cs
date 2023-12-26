@@ -13,8 +13,8 @@ namespace PlatformShoot
 
     public struct DirInputEvent
     {
-        public int inputX;
-        public int inputY;
+        public int x;
+        public int y;
     }
 
     public struct JumpInputEvent
@@ -78,12 +78,12 @@ namespace PlatformShoot
                 switch(mCurrentInputDevice)
                 {
                     case E_InputDevice.Keyboard:
-                        mInputEvent.inputX = (int)input.x;
-                        mInputEvent.inputY = (int)input.y;
+                        mInputEvent.x = (int)input.x;
+                        mInputEvent.y = (int)input.y;
                         break;
                     case E_InputDevice.Gamepad:
-                        mInputEvent.inputX = Math.Abs(input.x) < sensitivity ? 0 : input.x > 0 ? 1 : -1;
-                        mInputEvent.inputY = Math.Abs(input.y) < sensitivity ? 0 : input.y > 0 ? 1 : -1;
+                        mInputEvent.x = Math.Abs(input.x) < sensitivity ? 0 : input.x > 0 ? 1 : -1;
+                        mInputEvent.y = Math.Abs(input.y) < sensitivity ? 0 : input.y > 0 ? 1 : -1;
                         break;
                 }
                 this.SendEvent(mInputEvent);
@@ -95,20 +95,20 @@ namespace PlatformShoot
                     case E_InputDevice.Keyboard:
                         var board = Keyboard.current;
 
-                        switch(mInputEvent.inputX)
+                        switch(mInputEvent.x)
                         {
-                            case -1: mInputEvent.inputX = board.dKey.wasPressedThisFrame || board.rightArrowKey.wasPressedThisFrame ? 1 : 0; break;
-                            case 1: mInputEvent.inputX = board.aKey.wasPressedThisFrame || board.leftArrowKey.wasPressedThisFrame ? -1 : 0; break;
+                            case -1: mInputEvent.x = board.dKey.wasPressedThisFrame || board.rightArrowKey.wasPressedThisFrame ? 1 : 0; break;
+                            case 1: mInputEvent.x = board.aKey.wasPressedThisFrame || board.leftArrowKey.wasPressedThisFrame ? -1 : 0; break;
                         }
-                        switch(mInputEvent.inputY)
+                        switch(mInputEvent.y)
                         {
-                            case -1: mInputEvent.inputY = board.wKey.wasPressedThisFrame || board.upArrowKey.wasPressedThisFrame ? 1 : 0; break;
-                            case 1: mInputEvent.inputY = board.sKey.wasPressedThisFrame || board.downArrowKey.wasPressedThisFrame ? -1 : 0; break;
+                            case -1: mInputEvent.y = board.wKey.wasPressedThisFrame || board.upArrowKey.wasPressedThisFrame ? 1 : 0; break;
+                            case 1: mInputEvent.y = board.sKey.wasPressedThisFrame || board.downArrowKey.wasPressedThisFrame ? -1 : 0; break;
                         }
                         break;
                     default:
-                        mInputEvent.inputX = 0;
-                        mInputEvent.inputY = 0;
+                        mInputEvent.x = 0;
+                        mInputEvent.y = 0;
                         break;
                 }
                 this.SendEvent(mInputEvent);
