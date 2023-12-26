@@ -1,12 +1,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 using QFramework;
+using System;
 
 namespace PlatformShoot
 {
     public class MainPanel : PlatformShootGameController
     {
         private Text mScoreText;
+
+        public event Action GetScoreAction;
 
         private void Start()
         {
@@ -29,6 +32,8 @@ namespace PlatformShoot
         private void OnScoreChanged(int score)
         {
             mScoreText.text = score.ToString();
+
+            if(GetScoreAction != null) GetScoreAction();
         }
 
         public void UpdateScoreText(int score)
